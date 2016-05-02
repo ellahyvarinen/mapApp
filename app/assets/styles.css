@@ -1,3 +1,7 @@
+body {
+	margin: 20 em;
+}
+
 #mapid {
 	height: 300px;
 }

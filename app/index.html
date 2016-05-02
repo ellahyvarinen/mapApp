@@ -12,30 +12,67 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>
 
 </head>
 
 <body>
-
     <script type="text/javascript" src="assets/fbLogin.js "></script>
 
-    <div id="login">
-        <div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="large">
-        </div>
-    </div>
-    <div id="status"></div>
-
     <div class="container">
+
+        <div id="login">
+            <div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="large"></div>
+        </div>
+        <div id="status"></div>
+
+
         <div id="mapid"></div>
-        <!--<i class="fa fa-map-marker"></i>-->
-        <button class="location btn btn-default">Get your location</button>
-        <button class="newMarker btn btn-default">Create new marker</button>
+        <!--<i class="fa fa-map-marker"></i>
+        <button class="locate-user-button btn btn-default">Get your location</button>
+-->
+        <form class="form-horizontal" id="createMarkerForm">
+            <div class="form-group">
+                <label for="imageInputFile">Place</label>
+                <input type="text" class="form-control" id="formName" name="PlaceName" placeholder="Place name">
+            </div>
+            <div class="form-group">
+                <label for="formDescription">Description</label>
+                <textarea class="form-control" id="formDescription" name="Description" rows="3"></textarea>
+                <!--<input type="text" class="form-control" placeholder="Description">-->
+            </div>
+            <div class="form-group">
+                <label for="imageInputFile">Load image</label>
+                <p class="help-block">Choose image for your place.</p>
+                <input type="file" id="imageInputFile" name="ImageUpload">
+            </div>
+            <hr>
+            <!--<button type="submit" class="btn btn-default">Save</button>-->
+            <input type="button" onclick="sendDataToMongoDB()" value="Send" name="" />
+        </form>
+
+			<!--
+        <div id="placeMarker">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Place name</h3>timestamp</div>
+                <div class="panel-body">Description
+                    <hr>
+                    <img src="http://placekitten.com/g/200/200" class="img-thumbnail" alt="Kisu" width="200" height="200">
+                </div>
+            </div>
+        </div>
+			-->
+
     </div>
+    <!--div container-->
 
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="assets/app.js"></script>
+    <script type="text/javascript" src="assets/databaseConnection.js"></script>
+
 </body>
 
 </html>

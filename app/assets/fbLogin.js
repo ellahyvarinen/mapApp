@@ -48,7 +48,7 @@ window.fbAsyncInit = function() {
 
 // Here we run a very simple test of the Graph API after login is successful.
 function testAPI() {
-    console.log('Welcome! Fetching your information... ');
+    console.log('Welcome! Fetching your information.... ');
     FB.api('/me', function(response) {
         console.log('Successful login for: ' + response.name);
         //Create user status & logout-button

@@ -2,8 +2,8 @@
 
 $(function() {
 
-    var mymap = L.map('mapid').setView([51.505, -0.09], 10);
-
+    //Map layer
+    var mymap = L.map('mapid');
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 18,
@@ -11,33 +11,54 @@ $(function() {
         accessToken: 'pk.eyJ1IjoiZWxsYWh5dmFyaW5lbiIsImEiOiJjaW5md3I3bWcwMDg3dzRseGdidDR6dWNxIn0.BEptiAhxiXNJZAexSRNurQ'
     }).addTo(mymap);
 
-    $('.location').on('click', function() {
-        mymap.locate({
-            setView: true,
-            maxZoom: 15
-        });
-    });
+    //GeoJson layer
+    var geoJsonLayer = L.geoJson().addTo(mymap);
+    //geoJsonLayer.addData(geojsonFeature);
+		/*
+		//GeoJSon Layer
+		var myGeoJsonLayer = L.geoJson().addTo(mymap);
+		myGeoJsonLayer.addData(geojsonFeature);
+		console.log('Marker added!');
+		*/
 
+    //Locate the user
+    mymap.locate({
+        setView: true,
+        maxZoom: 15
+    });
     mymap.on('locationfound', onLocationFound);
 
+    //Add marker based on user's location
     function onLocationFound(e) {
         console.log(e);
-        L.marker(e.latlng).addTo(mymap).bindPopup("<b>You are here</b>").openPopup();
-        console.log(e.latlng);
+        console.log(e.timestamp);
+        console.log(e.timestamp * 1000);
+
+        L.marker(e.latlng).addTo(mymap).bindPopup('<b>You are here</b><br/><br/>' + e.latitude + '<br/>' + e.longitude + '<br/>' + e.timestamp + '<br/>');
+
     }
 
-    /*
-    $('.newMarker').on('click', function(e) {
-    	mymap.on('locationfound', onLocationFound);
-    	L.marker(e.latlng).addTo(mymap).bindPopup("<b>Test</b>").openPopup();
+    //Add new marker
+		//<button class="add-marker-button btn btn-default">Add marker</button>
+    $('.add-marker-button').on('click', function() {
+        console.log('Marker button clicked!');
     });
 
-    var marker = L.marker([60.1, 24.5]).addTo(mymap);
-    marker.bindPopup("<b>Hello world!</b><br>#NewsByTwitter").openPopup();
 
-    var popup = L.popup()
-    	.setLatLng([60.1, 24.5]);
-      //.setContent("#NewsByTwitter")
-      //(.openOn(mymap);
-    	*/
+    $('#createMarkerForm').submit(function(e) {
+        var formData = {
+            method: "POST",
+            dataType: "json",
+            url: '',
+            success: function(resp) {
+                console.log(resp);
+                location.reload();
+            }
+        };
+        e.preventDefault();
+        $(this).ajaxSubmit(formData);
+    });
+
+
 });
+
