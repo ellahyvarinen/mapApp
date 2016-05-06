@@ -94,9 +94,13 @@ function getDataFromDB(data) {
             rowObject[keyValue[0].trim()] = keyValue[1].trim();
         }
         rows.push(rowObject);
-        var latlng = rowObject.latitude + ', ' + rowObject.longitude;
-        console.log(latlng);
-        var newMarker = L.marker([latlng]).addTo(mymap);
+        var latitude = JSON.parse(rowObject.latitude);
+        var longitude = JSON.parse(rowObject.longitude);
+        console.log(rowObject);
+        var timestamp = rowObject.timestamp;
+        var placename = rowObject.placename;
+        var note = rowObject.note;
+        var newMarker = L.marker([latitude, longitude]).addTo(mymap).bindPopup('<b>' + placename +'</b><br><p>' + note + '<br><br>' + timestamp +'</p>');
         console.log('Marker added!');
     }
     console.log(rows);
