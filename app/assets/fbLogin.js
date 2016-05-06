@@ -48,12 +48,34 @@ window.fbAsyncInit = function() {
 
 // Here we run a very simple test of the Graph API after login is successful.
 function testAPI() {
-    console.log('Welcome! Fetching your information.... ');
+    console.log('Welcome! Waiting for your information... ');
     FB.api('/me', function(response) {
         console.log('Successful login for: ' + response.name);
+        console.log(response);
+			
         //Create user status & logout-button
         document.getElementById('status').innerHTML =
-            '<i class="fa fa-user" aria-hidden="true"></i> ' + response.name + '<button onclick="logout()" id="log-out-button" class="btn btn-default btn-sm">Log out</button>';
+            '<i class="fa fa-user" aria-hidden="true"></i>' + response.name + '<button onclick="logout()" id="log-out-button" class="btn btn-default navbar-btn">Log out</button>';
+			
+        //Add Username to form
+        var newMarkerForm = document.getElementById('createMarkerForm');
+        var inputName = document.createElement("input");
+        inputName.type = "text";
+        inputName.name = "UserName";
+        inputName.id = "formUser";
+        inputName.style = "visibility: hidden;";
+        inputName.value = response.name;
+        newMarkerForm.insertBefore(inputName, newMarkerForm.childNodes[0]);
+
+        //Add UserID to form
+        var inputID = document.createElement("input");
+        inputID.type = "text";
+        inputID.name = "UserID";
+        inputID.id = "formUserID";
+        inputID.style = "visibility: hidden;";
+        inputID.value = response.id;
+        newMarkerForm.insertBefore(inputID, newMarkerForm.childNodes[1]);
+
         //Remove fb-login-button
         var child = document.getElementById('login-button');
         child.parentNode.removeChild(child);

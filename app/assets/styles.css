@@ -3,5 +3,19 @@ body {
 }
 
 #mapid {
-	height: 300px;
+	height: 400px;
+	margin-top: 50px;
+}
+
+#navigator {
+	width: 200px;
+}
+
+#status {
+	width: 200 px;
+	margin-top: 20px;
+}
+
+.saveButton {
+	float: right;
 }
