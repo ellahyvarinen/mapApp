@@ -4,13 +4,20 @@
 var mymap = L.map('mapid');
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom: 10,
     id: 'ellahyvarinen.pp8fe87e',
     accessToken: 'pk.eyJ1IjoiZWxsYWh5dmFyaW5lbiIsImEiOiJjaW5md3I3bWcwMDg3dzRseGdidDR6dWNxIn0.BEptiAhxiXNJZAexSRNurQ',
-    layers: []
+    layers: [myPlaces]
 }).addTo(mymap);
 
-//Get user's coordinates
+//Layer groups and layer control
+var myPlaces = new L.LayerGroup();
+var overlayMaps = {
+    "My Places": myPlaces
+};
+L.control.layers(null, overlayMaps).addTo(mymap);
+
+//Get user's coordinates to form
 if (window.navigator.geolocation) {
     window.navigator.geolocation.watchPosition(showPosition);
 } else {
@@ -22,24 +29,23 @@ function showPosition(position) {
     var longitude = position.coords.longitude.toFixed(5);
     $('#formLatitude').val(latitude);
     $('#formLongitude').val(longitude);
-    //L.marker(latlng).addTo(mymap).bindPopup('<b>Hola!</b>').openPopup();
 }
 
 //Locate the user and set the map view
 mymap.locate({
     setView: true,
-    maxZoom: 15
+    maxZoom: 10
 });
 mymap.on('locationfound', onLocationFound);
 
 //Add marker based on user's location
 function onLocationFound(e) {
     console.log(e);
-    console.log('latlng: ' + e.latlng);
     L.marker(e.latlng).addTo(mymap);
+    console.log('Location found!');
 }
 
-
+//Send form data to database
 function sendDataToDB() {
 
     var placeName = $('#formName').val();
@@ -71,6 +77,7 @@ function sendDataToDB() {
     });
 }
 
+//Get data from database
 $.ajax({
     url: 'https://spreadsheets.google.com/feeds/list/1Bo7vikiwIG8v3cINZd9MZRIQuGNrrvUwaxs9ubPNlrU/1/public/basic?alt=json',
     type: "GET",
@@ -84,7 +91,7 @@ $.ajax({
 function getDataFromDB(data) {
     var rows = [];
     var cells = data.feed.entry;
-
+		//Process the data
     for (var i = 0; i < cells.length; i++) {
         var rowObject = {};
         rowObject.timestamp = cells[i].title.$t;
@@ -96,12 +103,13 @@ function getDataFromDB(data) {
         rows.push(rowObject);
         var latitude = JSON.parse(rowObject.latitude);
         var longitude = JSON.parse(rowObject.longitude);
-        console.log(rowObject);
         var timestamp = rowObject.timestamp;
         var placename = rowObject.placename;
         var note = rowObject.note;
-        var newMarker = L.marker([latitude, longitude]).addTo(mymap).bindPopup('<b>' + placename +'</b><br><p>' + note + '<br><br>' + timestamp +'</p>');
-        console.log('Marker added!');
+        if (rowObject.username == 'Ella Hyvärinen') {
+            var newMarker = L.marker([latitude, longitude]).addTo(myPlaces).bindPopup('<b>' + placename + '</b><br><p>' + note + '<br><br>' + timestamp + '</p>');
+            console.log(rowObject);
+            console.log('Marker added!');
+        }
     }
-    console.log(rows);
 }
