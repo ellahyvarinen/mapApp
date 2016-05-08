@@ -5,7 +5,7 @@ Log in with Facebook to locate yourself and add a marker to the map based on you
 
 ##Code Example
 Here is example how to add Mapbox map to your app by using leaflet Javascript library. This example shows how to locate yourself and add a marker based on your location.
-
+```
 HTML
 <div id="map"></div>
 
@@ -35,7 +35,7 @@ mymap.on('locationfound', onLocationFound);
 function onLocationFound(e) {
     L.marker(e.latlng).addTo(mymap).bindPopup('<b>You are here</b><p>Latitude ' + e.latitude + '<br>Longitude ' + e.longitude + '</p>').openPopup();
 }
-
+```
 ##API Reference
 - Facebook API for developers
 - Bootstrap
