@@ -10,10 +10,10 @@ function statusChangeCallback(response) {
         testAPI();
     } else if (response.status === 'not_authorized') {
         // The person is logged into Facebook, but not your app
-        document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
+        document.getElementById('login').innerHTML = '<h5 class="logInText">Log in&nbsp;&nbsp;&nbsp;</h5><div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
     } else {
         // The person is not logged into Facebook, so we're not sure if they are logged into this app or not.
-        document.getElementById('status').innerHTML = 'Please log ' + 'into Facebook.';
+        document.getElementById('login').innerHTML = '<h5 class="logInText">Log in&nbsp;&nbsp;&nbsp;</h5><div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
     }
 }
 
@@ -55,7 +55,7 @@ function testAPI() {
 			
         //Create user status & logout-button
         document.getElementById('status').innerHTML =
-            '<i class="fa fa-user" aria-hidden="true"></i>' + response.name + '<button onclick="logout()" id="log-out-button" class="btn btn-default navbar-btn">Log out</button>';
+            '<i class="fa fa-user" aria-hidden="true"></i><h5 id="status-username">&nbsp;&nbsp;&nbsp;' + response.name + '</h5><br><button onclick="logout()" id="log-out-button" class="btn btn-default">Log out</button>';
 			
         //Add Username to form
         var newMarkerForm = document.getElementById('createMarkerForm');
@@ -77,19 +77,18 @@ function testAPI() {
         newMarkerForm.insertBefore(inputID, newMarkerForm.childNodes[1]);
 
         //Remove fb-login-button
-        var child = document.getElementById('login-button');
+        var child = document.getElementById('login');
         child.parentNode.removeChild(child);
     });
 }
 
 function logout() {
     FB.logout(function(response) {
-        console.log('User logged out');
         //Remove user status & logout-button
         var userStatus = document.getElementById('status');
         userStatus.parentNode.removeChild(userStatus);
         //Create fb-login-button
-        document.getElementById('login').innerHTML = '<div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="large"></div>';
-        console.log('all done!');
+        document.getElementById('login').innerHTML = '<h5 class="logInText">Log in&nbsp;&nbsp;&nbsp;</h5><div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
+        console.log('User logged out!');
     });
 }

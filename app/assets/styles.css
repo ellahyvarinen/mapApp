@@ -1,21 +1,69 @@
 body {
-	margin: 20 em;
+    margin: 20 em;
 }
 
 #mapid {
-	height: 400px;
-	margin-top: 50px;
+    height: 400px;
+    margin-top: 20px;
 }
 
-#navigator {
-	width: 200px;
+#globe {
+    display: inline-block;
+}
+
+#logoText {
+    display: inline-block;
+    font-family: 'Amatic SC', serif;
+    font-weight: 700;
+    font-size: 50px;
+}
+
+#login {
+    display: inline-block;
+    padding-top: 20px;
+}
+
+.logInText {
+    text-transform: uppercase;
+    font-family: 'Amatic SC', serif;
+    font-weight: 700;
+    font-size: 30px;
+    display: inline-block;
+    margin-top: 20px;
+    margin-bottom: 0;
 }
 
 #status {
-	width: 200 px;
-	margin-top: 20px;
+    width: 200 px;
+    margin-top: 20px;
+}
+
+#status-username {
+    text-transform: uppercase;
+    font-family: 'Amatic SC', serif;
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0;
+    display: inline-block;
+}
+
+#log-out-button {
+    float: right;
+    display: inline-block;
+}
+
+#logOutText {
+    text-transform: uppercase;
+    font-family: 'Amatic SC', serif;
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0;
 }
 
 .saveButton {
-	float: right;
+    float: right;
+}
+
+hr {
+    clear: both;
 }

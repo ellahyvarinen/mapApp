@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="assets/styles.css" />
     <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <link href='https://fonts.googleapis.com/css?family=Amatic+SC:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -17,20 +18,26 @@
 </head>
 
 <body>
+    <div id="fb-root"></div>
     <script type="text/javascript" src="assets/fbLogin.js "></script>
 
     <div class="container">
-        <nav class="navbar navbar-default">
+        <nav class="navbar">
             <div class="container-fluid">
 
                 <div class="navbar-header">
-                    <h2>Mapper</h2>
+                    <i class="fa fa-globe fa-4x" id="globe" aria-hidden="true"></i>
+                    <h2 id="logoText">Mapper</h2>
                 </div>
                 <div class="nav navbar-nav navbar-right">
+
                     <div id="login">
-                        <div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="large"></div>
+                        <!--<i class="fa fa-facebook-square fa-3x" aria-hidden="true"></i>-->
+                        <div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>
                     </div>
+
                     <div id="status"></div>
+
                 </div>
 
             </div>
@@ -39,6 +46,7 @@
 
         <div id="mapid"></div>
 
+        <br>
         <form class="form-horizontal" id="createMarkerForm">
             <div class="form-group">
                 <label for="imageInputFile">Place Name</label>
@@ -57,10 +65,12 @@
 						-->
             <input type="text" class="hidden" id="formLatitude" name="Latitude">
             <input type="text" class="hidden" id="formLongitude" name="Longitude">
-            <hr>
+
             <input type="button" class="saveButton btn btn-default" onclick="sendDataToDB()" value="Save" name="" />
         </form>
-
+        <br><br>
+        <hr>
+			
     </div>
     <!--div container-->
 
