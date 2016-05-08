@@ -18,8 +18,7 @@
 </head>
 
 <body>
-    <div id="fb-root"></div>
-    <script type="text/javascript" src="assets/fbLogin.js "></script>
+    <script type="text/javascript" src="assets/app.js" async></script>
 
     <div class="container">
         <nav class="navbar">
@@ -43,11 +42,10 @@
             </div>
         </nav>
 
-
         <div id="mapid"></div>
 
-        <br>
-        <form class="form-horizontal" id="createMarkerForm">
+        <form class="form-horizontal" id="createMarkerForm" style="visibility:hidden;">
+            <h3 class="headerText">Add new marker to the map</h3><br>
             <div class="form-group">
                 <label for="imageInputFile">Place Name</label>
                 <input type="text" class="form-control" id="formName" name="PlaceName">
@@ -68,9 +66,10 @@
 
             <input type="button" class="saveButton btn btn-default" onclick="sendDataToDB()" value="Save" name="" />
         </form>
-        <br><br>
+        <br>
+        <br>
         <hr>
-			
+
     </div>
     <!--div container-->
 
@@ -78,8 +77,6 @@
     <script type="text/javascript" src="leaflet/leaflet-src.js"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-    <script type="text/javascript" src="assets/app.js"></script>
 
 </body>
 

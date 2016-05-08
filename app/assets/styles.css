@@ -33,11 +33,6 @@ body {
     margin-bottom: 0;
 }
 
-#status {
-    width: 200 px;
-    margin-top: 20px;
-}
-
 #status-username {
     text-transform: uppercase;
     font-family: 'Amatic SC', serif;
@@ -62,6 +57,18 @@ body {
 
 .saveButton {
     float: right;
+}
+
+.headerText {
+    text-transform: uppercase;
+    font-family: 'Amatic SC', serif;
+    font-weight: 700;
+    font-size: 30px;
+    margin: 0;
+}
+
+#createMarkerForm {
+	margin: 0;
 }
 
 hr {

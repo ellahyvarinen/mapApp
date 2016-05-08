@@ -1,5 +1,110 @@
 'use strict';
 
+window.fbAsyncInit = function() {
+    FB.init({
+        appId: '1591917047790330',
+        cookie: true, // enable cookies to allow the server to access the session
+        xfbml: true, // parse social plugins on this page
+        version: 'v2.5' // use graph api version 2.5
+    });
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+};
+
+// Load the SDK asynchronously
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+// This is called with the results from from FB.getLoginStatus().
+function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the app know the current login status of the person.
+    if (response.status === 'connected') {
+        // Logged into your app and Facebook.
+        login();
+        addLayersToMap();
+				getDataFromDB();
+    } else if (response.status === 'not_authorized') {
+        // The person is logged into Facebook, but not your app
+        document.getElementById('login').innerHTML = '<h5 class="logInText">Log in</h5>&nbsp;&nbsp;&nbsp;<div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
+    } else {
+        // The person is not logged into Facebook, so we're not sure if they are logged into this app or not.
+        document.getElementById('login').innerHTML = '<h5 class="logInText">Log in</h5>&nbsp;&nbsp;&nbsp;<div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
+    }
+}
+
+// This function is called when someone finishes with the Login Button.
+function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+}
+
+//Run a simple test of the Graph API after login is successful
+function login() {
+    console.log('Welcome! Waiting for your information... ');
+    FB.api('/me', function(response) {
+        console.log('Successful login for: ' + response.name);
+        console.log(response);
+
+        //Create user status & logout-button
+        document.getElementById('status').innerHTML =
+            '<i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<h5 id="status-username">' + response.name + '</h5><br><button onclick="logout()" id="log-out-button" class="btn btn-default">Log out</button>';
+
+        //Make form visible
+        document.getElementById('createMarkerForm').style.visibility = "visible";
+
+        //Add Username to form
+        var newMarkerForm = document.getElementById('createMarkerForm');
+        var inputName = document.createElement("input");
+        inputName.type = "text";
+        inputName.name = "UserName";
+        inputName.id = "formUser";
+        inputName.style = "visibility: hidden;";
+        inputName.value = response.name;
+        newMarkerForm.insertBefore(inputName, newMarkerForm.childNodes[0]);
+        console.log('Username added to form!');
+
+        //Add UserID to form
+        var inputID = document.createElement("input");
+        inputID.type = "text";
+        inputID.name = "UserID";
+        inputID.id = "formUserID";
+        inputID.style = "visibility: hidden;";
+        inputID.value = response.id;
+        newMarkerForm.insertBefore(inputID, newMarkerForm.childNodes[1]);
+
+        //Remove fb-login-button
+        //var child = document.getElementById('login-button');
+        //child.parentNode.removeChild(child);
+				document.getElementById('login').innerHTML = '';
+    });
+}
+
+function logout() {
+    FB.logout(function(response) {
+
+        //Remove user status & logout-button
+        var userStatus = document.getElementById('status');
+        userStatus.parentNode.removeChild(userStatus);
+
+        //Create fb-login-button
+        document.getElementById('login').innerHTML = '<h5 class="logInText">Log in</h5>&nbsp;&nbsp;&nbsp;<div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
+
+        //Make form hidden
+        document.getElementById('createMarkerForm').style.visibility = "hidden";
+        console.log('User logged out!');
+    });
+}
+
 //Map layer
 var mymap = L.map('mapid');
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -10,21 +115,14 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
     layers: [myPlaces]
 }).addTo(mymap);
 
-//Layer groups and layer control
-var myPlaces = new L.LayerGroup();
-var overlayMaps = {
-    "My Places": myPlaces
-};
-L.control.layers(null, overlayMaps).addTo(mymap);
-
 //Get user's coordinates to form
 if (window.navigator.geolocation) {
-    window.navigator.geolocation.watchPosition(showPosition);
+    window.navigator.geolocation.watchPosition(getCoordinates);
 } else {
     window.alert('Geolocation is not supported by this browser.');
 }
 
-function showPosition(position) {
+function getCoordinates(position) {
     var latitude = position.coords.latitude.toFixed(5);
     var longitude = position.coords.longitude.toFixed(5);
     $('#formLatitude').val(latitude);
@@ -41,8 +139,20 @@ mymap.on('locationfound', onLocationFound);
 //Add marker based on user's location
 function onLocationFound(e) {
     console.log(e);
-    L.marker(e.latlng).addTo(mymap);
-    console.log('Location found!');
+    L.marker(e.latlng).addTo(mymap).bindPopup('<b>You are here</b><p>Latitude ' + e.latitude + '<br>Longitude ' + e.longitude + '</p>');
+    console.log('Location found and marker added!');
+}
+
+//Layer groups
+var myPlaces = new L.LayerGroup();
+var overlayMaps = {
+    "My Places": myPlaces
+};
+
+function addLayersToMap() {
+    //Add layer control to the map
+    L.control.layers(null, overlayMaps).addTo(mymap);
+    console.log('Layers added to the map');
 }
 
 //Send form data to database
@@ -78,20 +188,23 @@ function sendDataToDB() {
 }
 
 //Get data from database
-$.ajax({
-    url: 'https://spreadsheets.google.com/feeds/list/1Bo7vikiwIG8v3cINZd9MZRIQuGNrrvUwaxs9ubPNlrU/1/public/basic?alt=json',
-    type: "GET",
-    dataType: "json",
-    success: function(data) {
-        console.log(data);
-        getDataFromDB(data);
-    }
-});
+function getDataFromDB() {
+    $.ajax({
+        url: 'https://spreadsheets.google.com/feeds/list/1Bo7vikiwIG8v3cINZd9MZRIQuGNrrvUwaxs9ubPNlrU/1/public/basic?alt=json',
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            console.log(data);
+            handleDataFromDB(data);
+        }
+    });
+}
 
-function getDataFromDB(data) {
+//Process the data and add markers to the map
+function handleDataFromDB(data) {
     var rows = [];
     var cells = data.feed.entry;
-		//Process the data
+
     for (var i = 0; i < cells.length; i++) {
         var rowObject = {};
         rowObject.timestamp = cells[i].title.$t;
@@ -106,7 +219,11 @@ function getDataFromDB(data) {
         var timestamp = rowObject.timestamp;
         var placename = rowObject.placename;
         var note = rowObject.note;
-        if (rowObject.username == 'Ella Hyvärinen') {
+				//Get username
+        var usernameValue = $('#formUser').val();
+        console.log('Username value: ' + usernameValue);
+				//Add user's markers to the map
+        if (rowObject.username == usernameValue) {
             var newMarker = L.marker([latitude, longitude]).addTo(myPlaces).bindPopup('<b>' + placename + '</b><br><p>' + note + '<br><br>' + timestamp + '</p>');
             console.log(rowObject);
             console.log('Marker added!');
