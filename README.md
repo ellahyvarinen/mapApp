@@ -43,6 +43,9 @@ function onLocationFound(e) {
 - Mapbox
 - Google Sheets as a database
 
+##Installation
+`git clone https://github.com/ellahyvarinen/mapApp.git`
+
 ##License
 The MIT License (MIT)
 

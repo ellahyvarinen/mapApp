@@ -31,7 +31,7 @@ function statusChangeCallback(response) {
         // Logged into your app and Facebook.
         login();
         addLayersToMap();
-				getDataFromDB();
+        getDataFromDB();
     } else if (response.status === 'not_authorized') {
         // The person is logged into Facebook, but not your app
         document.getElementById('login').innerHTML = '<h5 class="logInText">Log in</h5>&nbsp;&nbsp;&nbsp;<div class="fb-login-button" id="login-button" scope="public_profile,email" onlogin="checkLoginState();" data-size="icon"></div>';
@@ -57,7 +57,7 @@ function login() {
 
         //Create user status & logout-button
         document.getElementById('status').innerHTML =
-            '<i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<h5 id="status-username">' + response.name + '</h5><br><button onclick="logout()" id="log-out-button" class="btn btn-default">Log out</button>';
+            '<i class="fa fa-user fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<h5 id="status-username">' + response.name + '</h5><br><button onclick="logout()" id="log-out-button" class="btn btn-default">Log out</button>';
 
         //Make form visible
         document.getElementById('createMarkerForm').style.visibility = "visible";
@@ -83,9 +83,7 @@ function login() {
         newMarkerForm.insertBefore(inputID, newMarkerForm.childNodes[1]);
 
         //Remove fb-login-button
-        //var child = document.getElementById('login-button');
-        //child.parentNode.removeChild(child);
-				document.getElementById('login').innerHTML = '';
+        document.getElementById('login').innerHTML = '';
     });
 }
 
@@ -105,7 +103,7 @@ function logout() {
     });
 }
 
-//Map layer
+//Create base map layer
 var mymap = L.map('mapid');
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -115,7 +113,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
     layers: [myPlaces]
 }).addTo(mymap);
 
-//Get user's coordinates to form
+//Get user's coordinates
 if (window.navigator.geolocation) {
     window.navigator.geolocation.watchPosition(getCoordinates);
 } else {
@@ -125,6 +123,7 @@ if (window.navigator.geolocation) {
 function getCoordinates(position) {
     var latitude = position.coords.latitude.toFixed(5);
     var longitude = position.coords.longitude.toFixed(5);
+    //Add coordinates to form
     $('#formLatitude').val(latitude);
     $('#formLongitude').val(longitude);
 }
@@ -139,14 +138,16 @@ mymap.on('locationfound', onLocationFound);
 //Add marker based on user's location
 function onLocationFound(e) {
     console.log(e);
-    L.marker(e.latlng).addTo(mymap).bindPopup('<b>You are here</b><p>Latitude ' + e.latitude + '<br>Longitude ' + e.longitude + '</p>');
+    L.marker(e.latlng).addTo(mymap).bindPopup('<b>Your location</b><p>Latitude ' + e.latitude + '<br>Longitude ' + e.longitude + '</p>');
     console.log('Location found and marker added!');
 }
 
 //Layer groups
 var myPlaces = new L.LayerGroup();
+var allPlaces = new L.LayerGroup();
 var overlayMaps = {
-    "My Places": myPlaces
+    "My Places": myPlaces,
+    "All places": allPlaces
 };
 
 function addLayersToMap() {
@@ -158,6 +159,7 @@ function addLayersToMap() {
 //Send form data to database
 function sendDataToDB() {
 
+    //Collect data from form
     var placeName = $('#formName').val();
     var note = $('#formDescription').val();
     var latitude = $('#formLatitude').val();
@@ -172,6 +174,7 @@ function sendDataToDB() {
     console.log('User name: ' + userName);
     console.log('User ID: ' + userID);
 
+    //Send data to DB
     $.ajax({
         url: "https://docs.google.com/forms/d/18ymLe_gWmaHiEZKYUxnVmGB5ItKqc4fOeum1EEpGj1Y/formResponse",
         type: "POST",
@@ -219,14 +222,16 @@ function handleDataFromDB(data) {
         var timestamp = rowObject.timestamp;
         var placename = rowObject.placename;
         var note = rowObject.note;
-				//Get username
+        //Get username
         var usernameValue = $('#formUser').val();
         console.log('Username value: ' + usernameValue);
-				//Add user's markers to the map
+        //Add logged user's markers to the map
         if (rowObject.username == usernameValue) {
-            var newMarker = L.marker([latitude, longitude]).addTo(myPlaces).bindPopup('<b>' + placename + '</b><br><p>' + note + '<br><br>' + timestamp + '</p>');
+            var myPlaceMarker = L.marker([latitude, longitude]).addTo(myPlaces).bindPopup('<b>' + placename + '</b><br><p>' + note + '<br><br>' + timestamp + '</p>');
             console.log(rowObject);
             console.log('Marker added!');
+        } else { //Add all markers to the map
+            var allPlacesMarker = L.marker([latitude, longitude]).addTo(allPlaces).bindPopup('<b>' + placename + '</b><br><p>' + note + '<br><br>' + rowObject.username + '<br>' + timestamp + '</p>');
         }
     }
 }
